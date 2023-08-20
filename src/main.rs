@@ -2,6 +2,7 @@ use crossterm::{
     event, execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use keybinds::keybinds::handle_keybinds;
 use ratatui::{
     prelude::*,
     widgets::{Block, Borders, Paragraph, Wrap},
@@ -9,6 +10,7 @@ use ratatui::{
 use std::{error::Error, io, time::Duration};
 use typing::typing::TypingGame;
 
+mod keybinds;
 mod typing;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -70,10 +72,11 @@ fn run(
                 }
                 let text = Paragraph::new(Line::from(game.spans()))
                     .wrap(Wrap { trim: true })
-                    .block(Block::default().borders(Borders::all()).title(Span::styled(
-                        "DoggyType",
-                        Style::default().add_modifier(Modifier::BOLD).italic(),
-                    )))
+                    .block(
+                        Block::default()
+                            .borders(Borders::all())
+                            .title(Span::styled("DoggyType", Style::default().bold().italic())),
+                    )
                     .alignment(Alignment::Left);
                 frame.render_widget(text, chunks[1]);
                 // one day i might fix this cursor code when i feel like mathing:
@@ -111,35 +114,9 @@ fn run(
 
         if event::poll(Duration::from_millis(200))? {
             if let event::Event::Key(key) = event::read()? {
-                if key.modifiers.contains(event::KeyModifiers::CONTROL)
-                    && key.code == event::KeyCode::Char('c')
-                {
-                    break;
-                } else if let event::KeyCode::Char(ch) = key.code {
-                    if game.current.len() < game.goal.len() {
-                        if game.current.is_empty() {
-                            game.start_time = Some(std::time::SystemTime::now());
-                        }
-                        game.current.push(ch);
-                        if game.current.len() == game.goal.len() {
-                            game.end_time = Some(std::time::SystemTime::now());
-                        }
-                    }
-                } else if event::KeyCode::Backspace == key.code {
-                    if !game.current.is_empty() {
-                        if !key.modifiers.contains(event::KeyModifiers::ALT) {
-                            game.current.pop();
-                        } else {
-                            let words = game.current.split(" ").collect::<Vec<&str>>();
-                            game.current = words[..words.len() - 1].join(" ").to_string();
-                            game.current.push_str(" ");
-                        }
-                    }
-                } else if event::KeyCode::Esc == key.code {
-                    game.reset();
-                } else if event::KeyCode::Tab == key.code {
-                    game.new_goal();
-                    game.reset();
+                match handle_keybinds(game, &key) {
+                    Err(_) => break,
+                    _ => (),
                 }
             }
         }

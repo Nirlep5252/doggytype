@@ -26,3 +26,6 @@ $ cargo run
 - [ ] Add configuration system
 - [ ] Add famous quotes
 - [ ] Add a time mode with unlimited words
+
+## BUGS:
+- [ ] Windows pressing single key produces double output

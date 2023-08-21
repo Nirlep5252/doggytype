@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 crossterm = "0.27.0"
 rand_word = "0.1.18"
-ratatui = { version = "0.22.0", features = ["all-widgets", "macros", "serde", "termion", "termwiz"] }
+ratatui = { version = "0.22.0", features = ["all-widgets", "macros"] }

@@ -28,4 +28,4 @@ $ cargo run
 - [ ] Add a time mode with unlimited words
 
 ## BUGS:
-- [ ] Windows pressing single key produces double output
+- NONE :D (pls find some)

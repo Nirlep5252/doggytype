@@ -1,8 +1,14 @@
 pub mod keybinds {
     use crate::typing::typing::TypingGame;
-    use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+    use crossterm::event::{KeyCode, KeyEvent, KeyModifiers, KeyEventKind};
+    use std::env::consts;
 
     pub fn handle_keybinds(game: &mut TypingGame, key: &KeyEvent) -> Result<(), ()> {
+        if consts::OS == "windows" {
+            if key.kind == KeyEventKind::Release {
+                return Ok(());
+            }
+        }
         if key.modifiers.contains(KeyModifiers::CONTROL) && key.code == KeyCode::Char('c') {
             return Err::<(), ()>(());
         } else if let KeyCode::Char(ch) = key.code {

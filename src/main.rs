@@ -15,7 +15,7 @@ mod typing;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut terminal = setup_terminal()?;
-    run(&mut terminal, &mut TypingGame::new(10))?;
+    run(&mut terminal, &mut TypingGame::new(20))?;
     restore_terminal(&mut terminal)?;
     Ok(())
 }
@@ -79,10 +79,12 @@ fn run(
                     )
                     .alignment(Alignment::Left);
                 frame.render_widget(text, chunks[1]);
-                // one day i might fix this cursor code when i feel like mathing:
-                // let x = game.current.len() as u16 + 1;
-                // let y = chunk.y + 1;
-                // frame.set_cursor(chunk.x + x % chunk.width, y + x / chunk.width);
+                frame.render_widget(
+                    Paragraph::new(Line::from(game.cursor_spans()))
+                        .wrap(Wrap { trim: true })
+                        .block(Block::default().borders(Borders::all()).title("DoggyType")),
+                    chunks[1],
+                )
             } else {
                 // we're in the endgame now
                 assert!(game.end_time.is_some() && game.start_time.is_some());

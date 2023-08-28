@@ -1,6 +1,9 @@
 pub mod typing {
     use rand_word;
-    use ratatui::{text::Span, style::{Color, Style}};
+    use ratatui::{
+        style::{Color, Style},
+        text::Span,
+    };
     use std::time::SystemTime;
 
     #[derive(Debug)]
@@ -57,7 +60,7 @@ pub mod typing {
                     / 60f64)
         }
 
-        pub fn spans(&self) -> Vec<Span> {
+        pub fn curr_spans(&self) -> Vec<Span> {
             let mut spans = vec![];
             let goal_chars = self.goal.chars().collect::<Vec<char>>();
             for (i, ch) in self.current.char_indices() {
@@ -75,9 +78,31 @@ pub mod typing {
                     Style::default().fg(color),
                 ))
             }
+            spans
+        }
+
+        pub fn cursor_spans(&self) -> Vec<Span> {
+            let mut spans = vec![];
+            let goal_chars = self.goal.chars().collect::<Vec<char>>();
+            for (i, ch) in self.current.char_indices() {
+                let style = if goal_chars[i] == ch {
+                    Style::default()
+                } else {
+                    Style::default().fg(Color::Red)
+                };
+                spans.push(Span::styled(goal_chars[i].to_string(), style))
+            }
+            if !spans.is_empty() {
+                spans.push(Span::styled("█", Style::default().fg(Color::White)));
+            }
+            spans
+        }
+
+        pub fn spans(&self) -> Vec<Span> {
+            let mut spans = self.curr_spans();
             spans.push(Span::styled(
                 &self.goal[self.current.len()..],
-                Style::default().fg(Color::Gray),
+                Style::default().fg(Color::DarkGray),
             ));
             spans
         }

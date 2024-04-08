@@ -1,5 +1,4 @@
 pub mod typing {
-    use rand_word;
     use ratatui::{
         style::{Color, Style},
         text::Span,

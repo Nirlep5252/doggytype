@@ -57,8 +57,15 @@ fn run(
                 // the paragraph isn't finished yet
                 let mut info = vec![];
                 if game.start_time.is_some() {
+                    let acc = game.accuracy();
+                    let acc_str = if acc.is_nan() {
+                        "ACC: --".to_string()
+                    } else {
+                        format!("ACC: {:.2}%", acc)
+                    };
+
                     info.push(format!("WPM: {:.2}", game.wpm()));
-                    info.push(format!("ACC: {:.2}%", game.accuracy()))
+                    info.push(acc_str);
                 } else {
                     info.push("WPM: --".to_string());
                     info.push("ACC: --".to_string());
